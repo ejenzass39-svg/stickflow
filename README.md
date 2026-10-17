@@ -48,6 +48,9 @@ Tunggu sekitar 5-10 menit sampai muncul tanda centang hijau. Jika gagal: `gh run
 ## E. Isi API key
 Buka aplikasi > tab Profil > tempel API key Gemini (gratis di https://aistudio.google.com/apikey) > Simpan.
 
+## E2. Cadangan Groq (opsional)
+Jika Gemini penuh atau error, aplikasi mencoba ulang 3 kali lalu otomatis beralih ke Groq. Ambil key gratis di https://console.groq.com/keys, tempel di Profil > Cadangan: Groq. Kolom ini kosong secara bawaan.
+
 ## F. Mengubah aplikasi
 Edit `www/index.html`, lalu:
 ```
