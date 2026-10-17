@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StickFlow</title>
+<style>
+:root{--bg:#f4f3fa;--card:#fff;--ink:#16142a;--mute:#6b6987;--line:#e4e2f0;--ac:#6d4aff;--ac2:#ff8a3d;--chip:#efecff;--glow:rgba(109,74,255,.25)}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0a14;--card:#15132a;--ink:#f1f0fa;--mute:#9a97b8;--line:#272445;--chip:#221f45;--glow:rgba(130,100,255,.3);color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding-top:env(safe-area-inset-top,0px)}
+.app{max-width:520px;margin:0 auto;padding:18px 16px 120px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.logo{display:flex;gap:10px;align-items:center;font-weight:800;font-size:18px}
+.lg{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;box-shadow:0 6px 18px var(--glow)}
+.pro{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:linear-gradient(90deg,var(--ac2),#ffc03d);color:#2a1700}
+h2{font-size:22px;margin:4px 0}p.s{color:var(--mute);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+.hero{background:linear-gradient(135deg,#5b3df5,#a44bff 60%,#ff8a3d);color:#fff;border:0;box-shadow:0 14px 34px var(--glow)}
+.hero p{opacity:.9;margin:4px 0 12px}
+.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:700;font-size:14px;cursor:pointer;background:linear-gradient(135deg,var(--ac),#8f6bff);color:#fff}
+.btn.w{background:#fff;color:#4a2fd1}.btn.g{background:var(--chip);color:var(--ac);padding:9px 12px;font-size:12px}.btn.full{width:100%}.btn.r{background:#ffe9e9;color:#c62828}
+label{display:block;font-size:12px;font-weight:700;color:var(--mute);margin:10px 0 5px}
+input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--chip);color:var(--ac);margin:0 4px 4px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.scene{border-left:4px solid var(--ac)}.scene h4{margin:0}
+.pb{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:10px;margin-top:8px;font-size:13px;white-space:pre-wrap;word-break:break-word}
+.pb small{display:block;color:var(--mute);font-weight:700;margin-bottom:2px;text-transform:uppercase;font-size:10px}
+.empty{text-align:center;color:var(--mute);padding:26px 10px}
+nav{position:fixed;left:0;right:0;bottom:0;padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line);z-index:5}
+nav div{display:flex;max-width:520px;margin:auto;gap:4px}
+nav button{flex:1;border:0;background:none;color:var(--mute);font-size:10px;font-weight:700;padding:6px 0;border-radius:12px}
+nav button svg{display:block;margin:0 auto 2px}nav button.on{color:var(--ac);background:var(--chip)}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:13px;font-weight:700;opacity:0;transition:.25s;z-index:9;pointer-events:none;max-width:90%}
+.toast.s{opacity:1}
+#ld{position:fixed;inset:0;background:rgba(10,8,25,.6);display:none;place-items:center;color:#fff;font-weight:700;z-index:8}
+</style></head><body>
+<div class="app"><header><div class="logo"><div class="lg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="5" r="3"/><path d="M12 8v7M6 11l6 2 6-2M12 15l-4 6M12 15l4 6"/></svg></div>StickFlow</div><span class="pro">STUDIO PRO</span></header><main id="v"></main></div>
+<nav><div id="nv"></div></nav><div class="toast" id="t"></div><div id="ld">Gemini sedang bekerja…</div>
+<script>
+var D={key:"",model:"gemini-2.5-flash",name:"",niche:"",tone:"",palette:"",ideas:[],sb:null,seo:"",topic:"",dur:"5",tab:"home"};
+var S=JSON.parse(JSON.stringify(D));
+try{var z=localStorage.getItem("sf2");if(z)Object.assign(S,JSON.parse(z))}catch(e){}
+function save(){try{localStorage.setItem("sf2",JSON.stringify(S))}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+function toast(m){var t=$("t");t.textContent=m;t.className="toast s";setTimeout(function(){t.className="toast"},2600)}
+function cp(i){var x=$(i).textContent;try{navigator.clipboard.writeText(x).then(function(){toast("Tersalin ✓")},function(){toast("Gagal menyalin")})}catch(e){toast("Gagal menyalin")}}
+var ic={home:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',ide:'<path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z"/>',studio:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>',me:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'};
+var tabs=[["home","Beranda"],["ide","Ide"],["studio","Studio"],["me","Profil"]];
+function go(t){S.tab=t;save();render();window.scrollTo(0,0)}
+function STY(){return "minimalist 2D stickman, thick clean black outline, round white head, simple dot eyes, flat colors, "+(S.palette?"palette "+S.palette+", ":"")+"consistent line weight, 16:9, no text, no watermark"}
+async function ask(p,json){
+  if(!S.key){toast("Isi API key Gemini di tab Profil dulu");go("me");return null}
+  $("ld").style.display="grid";
+  try{
+    var r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(S.model)+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":S.key},body:JSON.stringify({contents:[{parts:[{text:p}]}],generationConfig:json?{responseMimeType:"application/json"}:{}})});
+    var d=await r.json();if(!r.ok)throw new Error((d.error&&d.error.message)||("HTTP "+r.status));
+    var t=d.candidates[0].content.parts.map(function(x){return x.text||""}).join("");
+    return json?JSON.parse(t.replace(/```json|```/g,"").trim()):t;
+  }catch(e){toast("Error: "+e.message);return null}
+  finally{$("ld").style.display="none"}
+}
+function ctx(){return "Channel animasi stickman bernama '"+S.name+"', niche: "+S.niche+", tone: "+(S.tone||"santai")+", bahasa Indonesia."}
+async function genIdeas(){
+  if(!S.niche){toast("Isi niche di tab Profil dulu");return go("me")}
+  var r=await ask(ctx()+" Buat 12 ide video YouTube orisinal berpotensi viral. Balas HANYA JSON array objek: {\"t\":judul maks 60 karakter,\"a\":sudut pandang unik,\"s\":skor potensi 1-10,\"d\":\"Mudah|Sedang|Sulit\"}.",true);
+  if(r){S.ideas=r;save();render()}
+}
+async function genSb(){
+  S.topic=$("tp").value.trim();S.dur=$("du").value;
+  if(!S.topic)return toast("Isi topik video dulu");
+  var r=await ask(ctx()+" Topik video: "+S.topic+". Durasi "+S.dur+" menit. Tulis naskah retention-optimized (hook 5 detik, open loop, pattern interrupt, twist di 75-85%, penutup + CTA) lalu pecah jadi 12 scene kunci (3-8 detik). Balas HANYA JSON array objek: {\"k\":label bagian,\"d\":durasi detik,\"vo\":narasi Indonesia,\"img\":prompt gambar bahasa Inggris berisi subjek, aksi, ekspresi, latar, sudut kamera (TANPA style),\"ani\":prompt animasi bahasa Inggris berisi gerakan karakter, gerakan kamera, kecepatan, efek,\"sfx\":efek suara,\"tr\":transisi}.",true);
+  if(r){S.sb=r;S.seo="";save();render()}
+}
+async function genSeo(){
+  var r=await ask(ctx()+" Video: "+S.topic+". Buat: 10 judul (maks 60 karakter) + 1 rekomendasi, deskripsi dengan kata kunci di 2 baris pertama, 20 tag, 3 hashtag, 1 komentar sematan, dan 3 konsep thumbnail beserta prompt gambar thumbnail bahasa Inggris 16:9. Format teks rapi tanpa markdown tebal.",false);
+  if(r){S.seo=r;save();render()}
+}
+function render(){
+  $("nv").innerHTML=tabs.map(function(a){return '<button class="'+(S.tab==a[0]?"on":"")+'" onclick="go(\''+a[0]+'\')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ic[a[0]]+'</svg>'+a[1]+'</button>'}).join("");
+  var h="";
+  if(S.tab=="home"){
+    h='<h2>Selamat datang</h2><p class="s">Aplikasi ini kosong. Isi sendiri, tanpa data bawaan.</p>';
+    h+='<div class="card hero"><b>Mulai dari 3 langkah</b><p>1) Isi API key Gemini &amp; profil channel<br>2) Buat ide di tab Ide<br>3) Buat storyboard di tab Studio</p><button class="btn w" onclick="go(\''+(S.key?"ide":"me")+'\')">'+(S.key?"Buka Ide →":"Isi API key →")+'</button></div>';
+    h+='<div class="card"><div class="row"><b>API key Gemini</b><span class="chip">'+(S.key?"Terisi":"Kosong")+'</span></div></div><div class="card"><div class="row"><b>Ide tersimpan</b><span class="chip">'+S.ideas.length+'</span></div></div><div class="card"><div class="row"><b>Storyboard</b><span class="chip">'+(S.sb?S.sb.length+" scene":"Belum ada")+'</span></div></div>';
+  }
+  if(S.tab=="ide"){
+    h='<h2>Generator Ide</h2><p class="s">Niche: <b>'+esc(S.niche||"belum diisi")+'</b></p><button class="btn full" onclick="genIdeas()">Buat 12 ide dengan Gemini</button><div style="height:12px"></div>';
+    h+=S.ideas.length?S.ideas.map(function(x,i){return '<div class="card"><b>'+esc(x.t)+'</b><p class="s" style="margin:4px 0 8px">'+esc(x.a)+'</p><span class="chip">Skor '+esc(x.s)+'/10</span><span class="chip">'+esc(x.d)+'</span><div><button class="btn g" onclick="useIdea('+i+')">Jadikan storyboard</button></div></div>'}).join(""):'<div class="empty">Belum ada ide.<br>Tekan tombol di atas.</div>';
+  }
+  if(S.tab=="studio"){
+    h='<h2>Studio</h2><p class="s">Naskah, storyboard, prompt gambar &amp; animasi.</p><div class="card"><label>Topik video</label><input id="tp" value="'+esc(S.topic)+'" placeholder="Tulis topik video"><label>Durasi (menit)</label><select id="du">'+["1","3","5","8","10"].map(function(m){return '<option'+(S.dur==m?" selected":"")+'>'+m+'</option>'}).join("")+'</select><div style="height:12px"></div><button class="btn full" onclick="genSb()">Hasilkan storyboard</button></div>';
+    if(S.sb){
+      var tot=S.sb.reduce(function(a,c){return a+(+c.d||0)},0);
+      h+='<div class="card"><span class="chip">'+S.sb.length+' scene</span><span class="chip">'+tot+' detik</span><div id="allvo" style="display:none">'+esc(S.sb.map(function(c){return c.vo}).join("\n\n"))+'</div><div style="margin-top:6px"><button class="btn g" onclick="cp(\'allvo\')">Salin seluruh naskah</button> <button class="btn g" onclick="genSeo()">Buat SEO &amp; thumbnail</button></div></div>';
+      h+=S.sb.map(function(c,i){var n=i+1;return '<div class="card scene"><div class="row"><h4>#'+n+' · '+esc(c.k)+'</h4><span class="chip">'+esc(c.d)+' dtk</span></div><div class="pb"><small>Narasi VO</small><span id="v'+n+'">'+esc(c.vo)+'</span></div><div class="pb"><small>Prompt gambar (EN)</small><span id="g'+n+'">'+esc(STY()+", "+c.img+". Negative: realistic, 3D, extra limbs, deformed hands, blurry, text, watermark")+'</span></div><div class="pb"><small>Prompt animasi (EN)</small><span id="a'+n+'">'+esc(c.ani+". 2D flat animation, keep stickman design consistent, no morphing, no extra characters, 4 seconds")+'</span></div><div class="pb"><small>SFX · Transisi</small>'+esc(c.sfx)+' · '+esc(c.tr)+'</div><div style="margin-top:10px"><button class="btn g" onclick="cp(\'v'+n+'\')">Salin VO</button> <button class="btn g" onclick="cp(\'g'+n+'\')">Gambar</button> <button class="btn g" onclick="cp(\'a'+n+'\')">Animasi</button></div></div>'}).join("");
+    }else h+='<div class="empty">Storyboard masih kosong.</div>';
+    if(S.seo)h+='<div class="card"><b>SEO &amp; Thumbnail</b><div class="pb" id="seo">'+esc(S.seo)+'</div><div style="margin-top:10px"><button class="btn g" onclick="cp(\'seo\')">Salin</button></div></div>';
+  }
+  if(S.tab=="me"){
+    h='<h2>Profil &amp; API</h2><p class="s">Semua tersimpan hanya di HP ini.</p><div class="card"><label>API key Gemini</label><input id="pk" type="password" value="'+esc(S.key)+'" placeholder="Tempel API key di sini" autocomplete="off"><label>Model Gemini</label><input id="pm" value="'+esc(S.model)+'"><p class="s" style="font-size:12px;margin:6px 0 0">Ambil key gratis di aistudio.google.com/apikey. Jika model lama tidak tersedia, ganti nama model di sini.</p></div><div class="card"><label>Nama channel</label><input id="pn" value="'+esc(S.name)+'" placeholder="Nama channel"><label>Niche</label><input id="pi" value="'+esc(S.niche)+'" placeholder="contoh: fakta unik, horor, motivasi"><label>Tone</label><input id="pt" value="'+esc(S.tone)+'" placeholder="contoh: lucu, dramatis"><label>Palet warna (opsional)</label><input id="pp" value="'+esc(S.palette)+'" placeholder="#6d4aff, #ff8a3d, #ffffff"><div style="height:12px"></div><button class="btn full" onclick="sv()">Simpan</button></div><div class="card"><button class="btn r full" onclick="wipe()">Kosongkan semua data</button></div>';
+  }
+  $("v").innerHTML=h;
+}
+function sv(){S.key=$("pk").value.trim();S.model=$("pm").value.trim()||D.model;S.name=$("pn").value.trim();S.niche=$("pi").value.trim();S.tone=$("pt").value.trim();S.palette=$("pp").value.trim();save();render();toast("Tersimpan ✓")}
+function useIdea(i){S.topic=S.ideas[i].t;S.sb=null;S.tab="studio";save();render();window.scrollTo(0,0)}
+function wipe(){if(confirm("Hapus semua data termasuk API key?")){S=JSON.parse(JSON.stringify(D));save();render();toast("Data dikosongkan")}}
+render();
+</script></body></html>

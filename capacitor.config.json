@@ -1,0 +1,6 @@
+{
+  "appId": "com.stickflow.studio",
+  "appName": "StickFlow",
+  "webDir": "www",
+  "plugins": { "CapacitorHttp": { "enabled": true } }
+}
