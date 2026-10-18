@@ -51,6 +51,12 @@ Buka aplikasi > tab Profil > tempel API key Gemini (gratis di https://aistudio.g
 ## E2. Cadangan Groq (opsional)
 Jika Gemini penuh atau error, aplikasi mencoba ulang 3 kali lalu otomatis beralih ke Groq. Ambil key gratis di https://console.groq.com/keys, tempel di Profil > Cadangan: Groq. Kolom ini kosong secara bawaan.
 
+## E3. Fitur terbaru
+- Prompt gambar dan animasi lebih detail (timeline gerak, kamera, efek).
+- Tombol "Animasi eror? Buat ulang" per scene: tempel pesan error dari Flow, aplikasi membuat versi baru yang lebih sederhana dan aman filter.
+- Pilihan format video panjang 16:9 atau Shorts 9:16.
+- Tab Jadwal berisi tabel jam upload.
+
 ## F. Mengubah aplikasi
 Edit `www/index.html`, lalu:
 ```
